@@ -122,8 +122,12 @@ if TORCH_AVAILABLE:
             value  = self.critic(shared)
             return logits, value.squeeze(-1)
 
-        def get_action(self, state: "torch.Tensor", deterministic: bool = False):
+        def get_action(self, state: "torch.Tensor", deterministic: bool = False,
+                   action_mask: "Optional[torch.Tensor]" = None):
             logits, value = self.forward(state)
+            # Apply action mask to prevent invalid actions
+            if action_mask is not None:
+                logits = logits + (action_mask * -1e8)
             dist   = Categorical(logits=logits)
             action = dist.mode if deterministic else dist.sample()
             return action, dist.log_prob(action), dist.entropy(), value
@@ -240,8 +244,24 @@ class PPOTrainer:
         while not done and steps < obs.get("max_steps", 20):
             steps += 1
             with torch.no_grad():
+                # Build action mask - discourage invalid actions
+                current_outfit = set(obs.get("current_outfit", []))
+                mask = torch.zeros(N_ACTIONS, dtype=torch.float32)
+                # Mask remove_item for items not in outfit
+                for i, act in enumerate(ACTION_SPACE):
+                    if act["action_type"] == "remove_item":
+                        if act.get("item_id") not in current_outfit:
+                            mask[i] = 1.0  # mask out
+                    elif act["action_type"] == "add_item":
+                        if act.get("item_id") in current_outfit:
+                            mask[i] = 1.0  # already in outfit
+                    elif act["action_type"] == "finalize_outfit":
+                        # Only allow finalize if we have at least 3 items
+                        if len(current_outfit) < 3:
+                            mask[i] = 1.0  # too early to finalize
+
                 action_idx, log_prob, entropy, value = self.model.get_action(
-                    state.unsqueeze(0)
+                    state.unsqueeze(0), action_mask=mask.to(self.device)
                 )
 
             action    = ACTION_SPACE[action_idx.item()]
@@ -487,8 +507,21 @@ class PPOTrainer:
                 while not done and steps < obs.get("max_steps", 20):
                     steps += 1
                     with torch.no_grad():
+                        current_outfit_eval = set(obs.get("current_outfit", []))
+                        mask_eval = torch.zeros(N_ACTIONS, dtype=torch.float32)
+                        for i, act in enumerate(ACTION_SPACE):
+                            if act["action_type"] == "remove_item":
+                                if act.get("item_id") not in current_outfit_eval:
+                                    mask_eval[i] = 1.0
+                            elif act["action_type"] == "add_item":
+                                if act.get("item_id") in current_outfit_eval:
+                                    mask_eval[i] = 1.0
+                            elif act["action_type"] == "finalize_outfit":
+                                if len(current_outfit_eval) < 3:
+                                    mask_eval[i] = 1.0
                         action_idx, _, _, _ = self.model.get_action(
-                            state.unsqueeze(0), deterministic=True
+                            state.unsqueeze(0), deterministic=True,
+                            action_mask=mask_eval.to(self.device)
                         )
                     action = ACTION_SPACE[action_idx.item()]
                     try:

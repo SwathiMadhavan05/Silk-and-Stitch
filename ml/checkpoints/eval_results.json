@@ -1,32 +1,32 @@
 {
   "ppo_results": {
     "task_casual_budget": {
-      "mean_score": 0.5,
+      "mean_score": 0.67,
       "std_score": 0.0,
-      "max_score": 0.5,
-      "mean_reward": 1.4885
+      "max_score": 0.67,
+      "mean_reward": 6.5268
     },
     "task_office_ready": {
-      "mean_score": 0.5417,
+      "mean_score": 0.65,
       "std_score": 0.0,
-      "max_score": 0.5417,
-      "mean_reward": 7.4401
+      "max_score": 0.65,
+      "mean_reward": 7.8536
     },
     "task_gala_stylist": {
-      "mean_score": 0.525,
+      "mean_score": 0.714,
       "std_score": 0.0,
-      "max_score": 0.525,
-      "mean_reward": 9.5206
+      "max_score": 0.714,
+      "mean_reward": 10.1169
     },
     "task_street_party": {
-      "mean_score": 0.5417,
+      "mean_score": 0.7,
       "std_score": 0.0,
-      "max_score": 0.5417,
-      "mean_reward": 7.7506
+      "max_score": 0.7,
+      "mean_reward": 6.8228
     }
   },
-  "avg_score": 0.5271,
+  "avg_score": 0.6835,
   "vs_rule_based": 0.625,
-  "improvement_pct": -15.66,
-  "training_episodes": 200
+  "improvement_pct": 9.36,
+  "training_episodes": 500
 }
