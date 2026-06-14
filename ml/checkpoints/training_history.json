@@ -1,0 +1,122 @@
+[
+  {
+    "episode": 20,
+    "task_id": "task_street_party",
+    "avg_reward": 6.4734,
+    "avg_score": 0.6576,
+    "max_score": 0.9071,
+    "policy_loss": 0,
+    "value_loss": 0,
+    "entropy": 0,
+    "total_steps": 334,
+    "elapsed_sec": 0.8
+  },
+  {
+    "episode": 40,
+    "task_id": "task_street_party",
+    "avg_reward": 6.6975,
+    "avg_score": 0.6926,
+    "max_score": 0.86,
+    "policy_loss": 0.17442,
+    "value_loss": 0.75634,
+    "entropy": 4.36487,
+    "total_steps": 676,
+    "elapsed_sec": 1.5
+  },
+  {
+    "episode": 60,
+    "task_id": "task_street_party",
+    "avg_reward": 7.3477,
+    "avg_score": 0.7153,
+    "max_score": 0.9333,
+    "policy_loss": 0,
+    "value_loss": 0,
+    "entropy": 0,
+    "total_steps": 1072,
+    "elapsed_sec": 2.4
+  },
+  {
+    "episode": 80,
+    "task_id": "task_street_party",
+    "avg_reward": 6.8502,
+    "avg_score": 0.644,
+    "max_score": 0.8125,
+    "policy_loss": 0.04104,
+    "value_loss": 0.67513,
+    "entropy": 4.39582,
+    "total_steps": 1440,
+    "elapsed_sec": 3.2
+  },
+  {
+    "episode": 100,
+    "task_id": "task_street_party",
+    "avg_reward": 7.7172,
+    "avg_score": 0.7014,
+    "max_score": 0.9429,
+    "policy_loss": 0,
+    "value_loss": 0,
+    "entropy": 0,
+    "total_steps": 1832,
+    "elapsed_sec": 4.0
+  },
+  {
+    "episode": 120,
+    "task_id": "task_street_party",
+    "avg_reward": 6.3018,
+    "avg_score": 0.6594,
+    "max_score": 0.925,
+    "policy_loss": 0.03894,
+    "value_loss": 0.83613,
+    "entropy": 4.45688,
+    "total_steps": 2179,
+    "elapsed_sec": 4.8
+  },
+  {
+    "episode": 140,
+    "task_id": "task_street_party",
+    "avg_reward": 7.9078,
+    "avg_score": 0.7002,
+    "max_score": 0.8667,
+    "policy_loss": 0,
+    "value_loss": 0,
+    "entropy": 0,
+    "total_steps": 2568,
+    "elapsed_sec": 5.6
+  },
+  {
+    "episode": 160,
+    "task_id": "task_street_party",
+    "avg_reward": 6.5271,
+    "avg_score": 0.6242,
+    "max_score": 0.825,
+    "policy_loss": -0.01345,
+    "value_loss": 0.87456,
+    "entropy": 4.46762,
+    "total_steps": 2934,
+    "elapsed_sec": 6.5
+  },
+  {
+    "episode": 180,
+    "task_id": "task_street_party",
+    "avg_reward": 6.8982,
+    "avg_score": 0.6658,
+    "max_score": 0.925,
+    "policy_loss": 0,
+    "value_loss": 0,
+    "entropy": 0,
+    "total_steps": 3290,
+    "elapsed_sec": 7.2
+  },
+  {
+    "episode": 200,
+    "task_id": "task_street_party",
+    "avg_reward": 7.7426,
+    "avg_score": 0.6647,
+    "max_score": 0.85,
+    "policy_loss": 0.0467,
+    "value_loss": 0.74363,
+    "entropy": 4.48363,
+    "total_steps": 3690,
+    "elapsed_sec": 8.1
+  }
+]

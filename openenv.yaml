@@ -1,0 +1,50 @@
+name: fashion-openenv
+version: "2.0.0"
+description: >
+  OpenEnv-compliant fashion styling and supply chain optimization environment
+  for Bangalore boutiques. Features PPO RL agent, LSTM forecasting, and SHAP explainability.
+tags:
+  - openenv
+  - fashion
+  - reinforcement-learning
+  - supply-chain
+  - india
+author: swathi-01
+license: MIT
+tasks:
+  - id: task_casual_budget
+    name: Budget Casual Summer Look
+    difficulty: easy
+    max_steps: 15
+    expected_baseline_score: 0.72
+  - id: task_office_ready
+    name: Office-Ready Professional Look
+    difficulty: medium
+    max_steps: 20
+    expected_baseline_score: 0.65
+  - id: task_gala_stylist
+    name: Winter Gala Look
+    difficulty: hard
+    max_steps: 25
+    expected_baseline_score: 0.55
+  - id: task_street_party
+    name: Street Party Look
+    difficulty: expert
+    max_steps: 20
+    expected_baseline_score: 0.58
+reward:
+  type: float
+  range: [0.001, 0.999]
+endpoints:
+  reset:
+    method: POST
+    path: /reset
+  step:
+    method: POST
+    path: /step
+  state:
+    method: GET
+    path: /state
+  grade:
+    method: GET
+    path: /grade

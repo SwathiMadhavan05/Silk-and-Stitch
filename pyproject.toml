@@ -1,0 +1,36 @@
+[build-system]
+requires = ["setuptools>=68.0"]
+build-backend = "setuptools.backends.legacy:build"
+
+[project]
+name = "fashion-openenv"
+version = "2.0.0"
+description = "OpenEnv-compliant fashion AI environment with PPO, LSTM, and SHAP"
+readme = "README.md"
+license = {text = "MIT"}
+requires-python = ">=3.11"
+keywords = ["openenv", "reinforcement-learning", "fashion", "supply-chain", "india", "lstm", "ppo"]
+dependencies = [
+    "fastapi>=0.115.0",
+    "uvicorn[standard]>=0.34.0",
+    "pydantic>=2.10.0",
+    "requests>=2.32.0",
+    "torch>=2.0.0",
+    "openenv-core>=0.2.0",
+]
+
+[project.scripts]
+server = "server.app:main"
+train  = "train:main"
+
+[project.urls]
+Homepage   = "https://huggingface.co/spaces/swathi-01/fashion-openenv"
+Repository = "https://github.com/SwathiMadhavan05/fashion-openenv"
+
+[tool.openenv]
+entry_point = "server.app:app"
+tasks = ["task_casual_budget","task_office_ready","task_gala_stylist","task_street_party"]
+reset_endpoint = "/reset"
+step_endpoint  = "/step"
+state_endpoint = "/state"
+grade_endpoint = "/grade"

@@ -1,0 +1,1228 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Silk & Stitch — Fashion AI Platform</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Mono:wght@400;500&family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --ink: #0f0e0d;
+  --paper: #faf8f4;
+  --surface: #f2efe9;
+  --border: #e0dbd2;
+  --muted: #9a9488;
+  --accent: #c8522a;
+  --accent-light: #f5e8e2;
+  --teal: #1a7a6e;
+  --teal-light: #e0f0ee;
+  --amber: #b87d2a;
+  --amber-light: #faf0dc;
+  --red: #b83232;
+  --red-light: #fce8e8;
+  --green: #2d7a3a;
+  --green-light: #e4f2e6;
+  --purple: #5a3db8;
+  --purple-light: #eeeafc;
+  --serif: 'DM Serif Display', Georgia, serif;
+  --mono: 'DM Mono', monospace;
+  --sans: 'Outfit', sans-serif;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: var(--sans);
+  background: var(--paper);
+  color: var(--ink);
+  min-height: 100vh;
+  font-size: 14px;
+}
+
+/* ── SIDEBAR ── */
+.sidebar {
+  position: fixed;
+  top: 0; left: 0;
+  width: 220px;
+  height: 100vh;
+  background: var(--ink);
+  display: flex;
+  flex-direction: column;
+  padding: 28px 0 20px;
+  z-index: 100;
+}
+
+.logo {
+  padding: 0 24px 28px;
+  border-bottom: 1px solid rgba(255,255,255,0.08);
+}
+
+.logo-title {
+  font-family: var(--serif);
+  font-size: 20px;
+  color: #fff;
+  line-height: 1.1;
+}
+
+.logo-sub {
+  font-size: 10px;
+  color: rgba(255,255,255,0.4);
+  letter-spacing: .12em;
+  text-transform: uppercase;
+  margin-top: 4px;
+  font-family: var(--mono);
+}
+
+.nav { padding: 20px 12px; flex: 1; }
+
+.nav-section-label {
+  font-size: 9px;
+  letter-spacing: .14em;
+  text-transform: uppercase;
+  color: rgba(255,255,255,0.25);
+  font-family: var(--mono);
+  padding: 0 12px;
+  margin-bottom: 6px;
+  margin-top: 18px;
+}
+.nav-section-label:first-child { margin-top: 0; }
+
+.nav-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 9px 12px;
+  border-radius: 8px;
+  cursor: pointer;
+  color: rgba(255,255,255,0.55);
+  font-size: 13px;
+  font-weight: 400;
+  transition: all .15s;
+  border: none;
+  background: none;
+  width: 100%;
+  text-align: left;
+}
+.nav-item:hover { background: rgba(255,255,255,0.06); color: rgba(255,255,255,0.85); }
+.nav-item.active { background: rgba(200,82,42,0.18); color: #e8846a; }
+
+.nav-icon {
+  width: 16px;
+  height: 16px;
+  opacity: .7;
+  flex-shrink: 0;
+}
+
+.sidebar-footer {
+  padding: 16px 24px 0;
+  border-top: 1px solid rgba(255,255,255,0.08);
+}
+.server-status {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  font-size: 11px;
+  color: rgba(255,255,255,0.4);
+  font-family: var(--mono);
+}
+.status-dot {
+  width: 7px; height: 7px;
+  border-radius: 50%;
+  background: #4ade80;
+  animation: pulse 2s infinite;
+}
+.status-dot.error { background: #f87171; animation: none; }
+@keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.4} }
+
+/* ── MAIN ── */
+.main {
+  margin-left: 220px;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.topbar {
+  background: var(--paper);
+  border-bottom: 1px solid var(--border);
+  padding: 16px 32px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  position: sticky;
+  top: 0;
+  z-index: 50;
+}
+
+.page-title {
+  font-family: var(--serif);
+  font-size: 22px;
+  color: var(--ink);
+}
+
+.topbar-right {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.btn {
+  padding: 7px 16px;
+  border-radius: 7px;
+  font-size: 12px;
+  font-weight: 500;
+  cursor: pointer;
+  border: 1px solid var(--border);
+  background: var(--paper);
+  color: var(--ink);
+  font-family: var(--sans);
+  transition: all .15s;
+}
+.btn:hover { background: var(--surface); }
+.btn-accent {
+  background: var(--accent);
+  color: #fff;
+  border-color: var(--accent);
+}
+.btn-accent:hover { background: #b04520; }
+
+.content { padding: 28px 32px; flex: 1; }
+
+/* ── PAGES ── */
+.page { display: none; }
+.page.active { display: block; }
+
+/* ── STAT CARDS ── */
+.stat-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 14px;
+  margin-bottom: 28px;
+}
+
+.stat-card {
+  background: #fff;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 20px 22px;
+  position: relative;
+  overflow: hidden;
+}
+
+.stat-card::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 3px;
+}
+.stat-card.accent::before { background: var(--accent); }
+.stat-card.teal::before   { background: var(--teal); }
+.stat-card.amber::before  { background: var(--amber); }
+.stat-card.red::before    { background: var(--red); }
+.stat-card.green::before  { background: var(--green); }
+.stat-card.purple::before { background: var(--purple); }
+
+.stat-label {
+  font-size: 11px;
+  color: var(--muted);
+  letter-spacing: .06em;
+  text-transform: uppercase;
+  font-family: var(--mono);
+  margin-bottom: 8px;
+}
+.stat-value {
+  font-size: 28px;
+  font-weight: 600;
+  line-height: 1;
+  margin-bottom: 4px;
+}
+.stat-sub {
+  font-size: 11px;
+  color: var(--muted);
+}
+
+/* ── SECTION HEADERS ── */
+.section-header {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  margin-bottom: 14px;
+}
+.section-title {
+  font-family: var(--serif);
+  font-size: 18px;
+}
+.section-sub {
+  font-size: 12px;
+  color: var(--muted);
+}
+
+/* ── GRID LAYOUTS ── */
+.two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 24px; }
+.three-col { display: grid; grid-template-columns: repeat(3, minmax(0,1fr)); gap: 14px; margin-bottom: 24px; }
+
+/* ── CARDS ── */
+.card {
+  background: #fff;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 20px 22px;
+}
+
+/* ── ALERT ROWS ── */
+.alert-list { display: flex; flex-direction: column; gap: 8px; }
+
+.alert-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 16px;
+  border-radius: 8px;
+  border: 1px solid;
+  font-size: 13px;
+}
+.alert-row.critical { background: var(--red-light); border-color: #f0b4b4; }
+.alert-row.high     { background: var(--amber-light); border-color: #f0d4a0; }
+.alert-row.medium   { background: var(--teal-light); border-color: #a8d8d2; }
+
+.alert-badge {
+  font-size: 9px;
+  font-weight: 600;
+  letter-spacing: .1em;
+  padding: 2px 7px;
+  border-radius: 4px;
+  flex-shrink: 0;
+  font-family: var(--mono);
+}
+.alert-row.critical .alert-badge { background: var(--red); color: #fff; }
+.alert-row.high     .alert-badge { background: var(--amber); color: #fff; }
+.alert-row.medium   .alert-badge { background: var(--teal); color: #fff; }
+
+.alert-product { font-weight: 500; color: var(--ink); flex: 1; }
+.alert-msg { color: var(--muted); font-size: 12px; }
+.alert-action {
+  font-size: 11px;
+  font-family: var(--mono);
+  color: var(--accent);
+  flex-shrink: 0;
+  text-align: right;
+  max-width: 180px;
+}
+
+/* ── FORECAST TABLE ── */
+.forecast-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+}
+.forecast-table th {
+  text-align: left;
+  padding: 8px 12px;
+  font-size: 10px;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  color: var(--muted);
+  font-family: var(--mono);
+  border-bottom: 1px solid var(--border);
+  font-weight: 500;
+}
+.forecast-table td {
+  padding: 10px 12px;
+  border-bottom: 1px solid var(--surface);
+  color: var(--ink);
+}
+.forecast-table tr:last-child td { border-bottom: none; }
+.forecast-table tr:hover td { background: var(--surface); }
+
+.risk-pill {
+  display: inline-block;
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: .06em;
+  padding: 2px 8px;
+  border-radius: 20px;
+  font-family: var(--mono);
+}
+.risk-HIGH   { background: var(--red-light);    color: var(--red);    border: 1px solid #f0b4b4; }
+.risk-MEDIUM { background: var(--amber-light);  color: var(--amber);  border: 1px solid #f0d4a0; }
+.risk-LOW    { background: var(--green-light);  color: var(--green);  border: 1px solid #a8d8b8; }
+
+/* ── DEMAND BAR CHART ── */
+.bar-chart {
+  display: flex;
+  align-items: flex-end;
+  gap: 6px;
+  height: 100px;
+  padding: 8px 0 0;
+}
+.bar-col {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  height: 100%;
+  justify-content: flex-end;
+}
+.bar {
+  width: 100%;
+  border-radius: 4px 4px 0 0;
+  min-height: 4px;
+  transition: height .3s;
+}
+.bar-label { font-size: 9px; color: var(--muted); font-family: var(--mono); }
+
+/* ── PRODUCT GRID ── */
+.product-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 14px; }
+.product-card {
+  background: #fff;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 16px;
+  cursor: pointer;
+  transition: all .15s;
+}
+.product-card:hover { border-color: var(--accent); transform: translateY(-1px); }
+.product-cat {
+  font-size: 9px;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  color: var(--muted);
+  font-family: var(--mono);
+  margin-bottom: 6px;
+}
+.product-name {
+  font-weight: 500;
+  font-size: 13px;
+  margin-bottom: 10px;
+  line-height: 1.3;
+}
+.product-price {
+  font-family: var(--mono);
+  font-size: 14px;
+  color: var(--accent);
+  font-weight: 500;
+}
+.product-stock {
+  font-size: 11px;
+  color: var(--muted);
+  margin-top: 4px;
+}
+
+/* ── TASK CARDS ── */
+.task-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; margin-bottom: 24px; }
+.task-card {
+  background: #fff;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 22px;
+  cursor: pointer;
+  transition: all .2s;
+  position: relative;
+  overflow: hidden;
+}
+.task-card:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(0,0,0,0.06); }
+.task-card::after {
+  content: '';
+  position: absolute;
+  bottom: 0; left: 0; right: 0;
+  height: 3px;
+}
+.task-card.easy::after   { background: var(--green); }
+.task-card.medium::after { background: var(--amber); }
+.task-card.hard::after   { background: var(--red); }
+.task-card.hardplus::after { background: var(--purple); }
+
+.task-diff {
+  display: inline-block;
+  font-size: 9px;
+  font-weight: 600;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  font-family: var(--mono);
+  padding: 3px 8px;
+  border-radius: 4px;
+  margin-bottom: 10px;
+}
+.easy   .task-diff { background: var(--green-light);  color: var(--green); }
+.medium .task-diff { background: var(--amber-light);  color: var(--amber); }
+.hard   .task-diff { background: var(--red-light);    color: var(--red); }
+.hardplus .task-diff { background: var(--purple-light); color: var(--purple); }
+
+.task-name { font-family: var(--serif); font-size: 17px; margin-bottom: 6px; }
+.task-desc { font-size: 12px; color: var(--muted); line-height: 1.5; margin-bottom: 14px; }
+.task-meta { display: flex; gap: 16px; }
+.task-meta-item { font-size: 11px; color: var(--muted); }
+.task-meta-item span { color: var(--ink); font-weight: 500; }
+
+/* ── EPISODE PLAYER ── */
+.episode-box {
+  background: var(--ink);
+  border-radius: 12px;
+  padding: 22px 24px;
+  color: #fff;
+  margin-bottom: 20px;
+}
+.episode-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; }
+.episode-title { font-family: var(--serif); font-size: 17px; color: rgba(255,255,255,.9); }
+.episode-score {
+  font-family: var(--mono);
+  font-size: 24px;
+  color: #e8846a;
+  font-weight: 500;
+}
+.episode-actions { display: flex; flex-direction: column; gap: 6px; max-height: 180px; overflow-y: auto; }
+.action-line {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 12px;
+  font-family: var(--mono);
+  color: rgba(255,255,255,0.65);
+  padding: 5px 0;
+  border-bottom: 1px solid rgba(255,255,255,0.06);
+}
+.action-step { color: rgba(255,255,255,0.3); min-width: 28px; }
+.action-type { color: #7dd3fc; }
+.action-reward { color: #4ade80; margin-left: auto; }
+.action-reward.neg { color: #f87171; }
+
+.outfit-display {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 10px;
+}
+.outfit-tag {
+  background: rgba(255,255,255,0.08);
+  border: 1px solid rgba(255,255,255,0.12);
+  border-radius: 6px;
+  padding: 5px 10px;
+  font-size: 11px;
+  color: rgba(255,255,255,0.75);
+  font-family: var(--mono);
+}
+
+/* ── LOADING ── */
+.loading {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--muted);
+  font-size: 13px;
+  padding: 20px 0;
+}
+.spinner {
+  width: 16px; height: 16px;
+  border: 2px solid var(--border);
+  border-top-color: var(--accent);
+  border-radius: 50%;
+  animation: spin .7s linear infinite;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* ── EMPTY STATE ── */
+.empty {
+  text-align: center;
+  padding: 40px 20px;
+  color: var(--muted);
+}
+.empty-title { font-family: var(--serif); font-size: 18px; margin-bottom: 6px; color: var(--ink); }
+.empty-sub { font-size: 13px; }
+
+/* ── INSIGHT PILLS ── */
+.insights { display: flex; flex-direction: column; gap: 8px; }
+.insight {
+  display: flex;
+  gap: 10px;
+  align-items: flex-start;
+  font-size: 12px;
+  line-height: 1.5;
+  color: var(--ink);
+  padding: 10px 14px;
+  background: var(--surface);
+  border-radius: 8px;
+  border-left: 3px solid var(--accent);
+}
+
+/* ── MINI CHART ── */
+canvas.mini-chart { width: 100%; height: 80px; display: block; }
+
+/* ── EOQ TABLE ── */
+.eoq-row { display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 8px; padding: 10px 0; border-bottom: 1px solid var(--surface); align-items: center; font-size: 12px; }
+.eoq-row.header { font-size: 10px; color: var(--muted); font-family: var(--mono); letter-spacing: .06em; text-transform: uppercase; font-weight: 500; }
+.eoq-row:last-child { border-bottom: none; }
+
+/* ── RESPONSIVE ── */
+@media (max-width: 900px) {
+  .sidebar { width: 60px; }
+  .logo-title, .logo-sub, .nav-section-label, .nav-item span, .server-status span { display: none; }
+  .main { margin-left: 60px; }
+  .stat-grid { grid-template-columns: repeat(2, 1fr); }
+  .two-col, .task-grid { grid-template-columns: 1fr; }
+  .three-col { grid-template-columns: 1fr 1fr; }
+}
+</style>
+</head>
+<body>
+
+<!-- SIDEBAR -->
+<aside class="sidebar">
+  <div class="logo">
+    <div class="logo-title">Silk &<br>Stitch</div>
+    <div class="logo-sub">Fashion AI · v2.0</div>
+  </div>
+
+  <nav class="nav">
+    <div class="nav-section-label">Overview</div>
+    <button class="nav-item active" onclick="showPage('dashboard')">
+      <svg class="nav-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="1" y="1" width="6" height="6" rx="1.5"/><rect x="9" y="1" width="6" height="6" rx="1.5"/><rect x="1" y="9" width="6" height="6" rx="1.5"/><rect x="9" y="9" width="6" height="6" rx="1.5"/></svg>
+      <span>Dashboard</span>
+    </button>
+
+    <div class="nav-section-label">Supply Chain</div>
+    <button class="nav-item" onclick="showPage('alerts')">
+      <svg class="nav-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M8 1L1 13h14L8 1z"/><line x1="8" y1="6" x2="8" y2="9"/><circle cx="8" cy="11.5" r=".5" fill="currentColor"/></svg>
+      <span>Alerts</span>
+    </button>
+    <button class="nav-item" onclick="showPage('forecast')">
+      <svg class="nav-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><polyline points="1,12 5,7 9,9 15,3"/><circle cx="5" cy="7" r="1" fill="currentColor"/><circle cx="9" cy="9" r="1" fill="currentColor"/><circle cx="15" cy="3" r="1" fill="currentColor"/></svg>
+      <span>Forecast</span>
+    </button>
+    <button class="nav-item" onclick="showPage('products')">
+      <svg class="nav-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="1" y="4" width="14" height="10" rx="1.5"/><path d="M5 4V3a3 3 0 016 0v1"/></svg>
+      <span>Catalogue</span>
+    </button>
+    <button class="nav-item" onclick="showPage('optimizer')">
+      <svg class="nav-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="8" cy="8" r="3"/><path d="M8 1v2M8 13v2M1 8h2M13 8h2"/></svg>
+      <span>Optimizer</span>
+    </button>
+
+    <div class="nav-section-label">Styling Agent</div>
+    <button class="nav-item" onclick="showPage('tasks')">
+      <svg class="nav-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 4h10M3 8h7M3 12h5"/></svg>
+      <span>Tasks</span>
+    </button>
+    <button class="nav-item" onclick="showPage('play')">
+      <svg class="nav-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><polygon points="4,2 14,8 4,14"/></svg>
+      <span>Play episode</span>
+    </button>
+  </nav>
+
+  <div class="sidebar-footer">
+    <div class="server-status">
+      <div class="status-dot" id="status-dot"></div>
+      <span id="status-text">connecting…</span>
+    </div>
+  </div>
+</aside>
+
+<!-- MAIN -->
+<main class="main">
+  <div class="topbar">
+    <div class="page-title" id="page-title">Dashboard</div>
+    <div class="topbar-right">
+      <button class="btn" onclick="refreshAll()">Refresh data</button>
+      <a href="/docs" target="_blank"><button class="btn btn-accent">API docs ↗</button></a>
+    </div>
+  </div>
+
+  <div class="content">
+
+    <!-- DASHBOARD PAGE -->
+    <div class="page active" id="page-dashboard">
+      <div class="stat-grid" id="stat-grid">
+        <div class="stat-card accent"><div class="stat-label">Inventory value</div><div class="stat-value" id="stat-inv">—</div><div class="stat-sub">total stock on hand</div></div>
+        <div class="stat-card red"><div class="stat-label">Dead stock</div><div class="stat-value" id="stat-dead">—</div><div class="stat-sub" id="stat-dead-pct">% of inventory</div></div>
+        <div class="stat-card teal"><div class="stat-label">Stockout risk</div><div class="stat-value" id="stat-critical">—</div><div class="stat-sub">products critical</div></div>
+        <div class="stat-card amber"><div class="stat-label">Reorders needed</div><div class="stat-value" id="stat-reorders">—</div><div class="stat-sub">this week</div></div>
+      </div>
+
+      <div class="two-col">
+        <div class="card">
+          <div class="section-header">
+            <div class="section-title">Top alerts</div>
+            <div class="section-sub" id="alert-count">loading…</div>
+          </div>
+          <div class="alert-list" id="dashboard-alerts"><div class="loading"><div class="spinner"></div>Loading alerts…</div></div>
+        </div>
+        <div class="card">
+          <div class="section-header">
+            <div class="section-title">Key insights</div>
+          </div>
+          <div class="insights" id="dashboard-insights"><div class="loading"><div class="spinner"></div>Loading insights…</div></div>
+        </div>
+      </div>
+
+      <div class="section-header">
+        <div class="section-title">Demand overview — next 12 weeks</div>
+        <div class="section-sub">top 8 products</div>
+      </div>
+      <div class="card">
+        <canvas id="demand-canvas" height="160"></canvas>
+      </div>
+    </div>
+
+    <!-- ALERTS PAGE -->
+    <div class="page" id="page-alerts">
+      <div class="section-header" style="margin-bottom:20px">
+        <div class="section-title">Inventory alerts</div>
+        <div class="section-sub" id="alerts-summary">loading…</div>
+      </div>
+      <div class="alert-list" id="full-alerts"><div class="loading"><div class="spinner"></div>Loading…</div></div>
+    </div>
+
+    <!-- FORECAST PAGE -->
+    <div class="page" id="page-forecast">
+      <div class="section-header" style="margin-bottom:20px">
+        <div class="section-title">12-week demand forecast</div>
+        <div class="section-sub">all 20 products · Holt-Winters + festival calendar</div>
+      </div>
+      <div class="card" style="margin-bottom:20px">
+        <table class="forecast-table" id="forecast-table">
+          <thead><tr>
+            <th>Product</th><th>Category</th><th>Avg weekly</th><th>Peak week</th><th>Peak units</th><th>Dead stock risk</th><th>Urgency</th>
+          </tr></thead>
+          <tbody id="forecast-tbody"><tr><td colspan="7"><div class="loading"><div class="spinner"></div>Loading forecasts…</div></td></tr></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- PRODUCTS PAGE -->
+    <div class="page" id="page-products">
+      <div class="section-header" style="margin-bottom:20px">
+        <div class="section-title">Product catalogue</div>
+        <div class="section-sub">20 items · 7 categories</div>
+      </div>
+      <div class="product-grid" id="product-grid"><div class="loading"><div class="spinner"></div>Loading catalogue…</div></div>
+    </div>
+
+    <!-- OPTIMIZER PAGE -->
+    <div class="page" id="page-optimizer">
+      <div class="section-header" style="margin-bottom:20px">
+        <div class="section-title">Supply chain optimizer</div>
+        <div class="section-sub">EOQ · markdown plans · bundle recommendations</div>
+      </div>
+      <div class="two-col">
+        <div class="card">
+          <div class="section-header"><div class="section-title" style="font-size:16px">Markdown plans</div></div>
+          <div id="markdown-list"><div class="loading"><div class="spinner"></div>Loading…</div></div>
+        </div>
+        <div class="card">
+          <div class="section-header"><div class="section-title" style="font-size:16px">Bundle recommendations</div></div>
+          <div id="bundle-list"><div class="loading"><div class="spinner"></div>Loading…</div></div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="section-header"><div class="section-title" style="font-size:16px">EOQ — optimal order quantities</div><div class="section-sub">Wilson formula · 95% service level</div></div>
+        <div class="eoq-row header"><div>Product</div><div>Order qty</div><div>Reorder pt</div><div>Safety stock</div></div>
+        <div id="eoq-list"><div class="loading"><div class="spinner"></div>Loading…</div></div>
+      </div>
+    </div>
+
+    <!-- TASKS PAGE -->
+    <div class="page" id="page-tasks">
+      <div class="section-header" style="margin-bottom:20px">
+        <div class="section-title">OpenEnv tasks</div>
+        <div class="section-sub">4 tasks · easy → hard+</div>
+      </div>
+      <div class="task-grid" id="task-grid"><div class="loading"><div class="spinner"></div>Loading tasks…</div></div>
+    </div>
+
+    <!-- PLAY PAGE -->
+    <div class="page" id="page-play">
+      <div class="section-header" style="margin-bottom:20px">
+        <div class="section-title">Live episode player</div>
+        <div class="section-sub">simulate an AI agent running a task</div>
+      </div>
+
+      <div style="display:flex;gap:12px;margin-bottom:20px;align-items:center">
+        <select id="task-select" style="padding:8px 12px;border-radius:7px;border:1px solid var(--border);background:var(--paper);font-family:var(--sans);font-size:13px;color:var(--ink)">
+          <option value="task_casual_budget">Task 1 — Budget casual (easy)</option>
+          <option value="task_office_ready">Task 2 — Office ready (medium)</option>
+          <option value="task_gala_stylist">Task 3 — Gala stylist (hard)</option>
+          <option value="sc">Task 4 — Supply chain (hard+)</option>
+        </select>
+        <button class="btn btn-accent" onclick="startEpisode()">Start episode</button>
+        <button class="btn" onclick="stepEpisode()" id="step-btn" disabled>Step</button>
+        <button class="btn" onclick="autoPlay()" id="auto-btn" disabled>Auto-play</button>
+        <span id="episode-status" style="font-size:12px;color:var(--muted);font-family:var(--mono)"></span>
+      </div>
+
+      <div class="episode-box" id="episode-box" style="display:none">
+        <div class="episode-header">
+          <div class="episode-title" id="ep-title">Episode running…</div>
+          <div style="text-align:right">
+            <div style="font-size:10px;color:rgba(255,255,255,0.4);font-family:var(--mono);margin-bottom:2px">SCORE</div>
+            <div class="episode-score" id="ep-score">0.000</div>
+          </div>
+        </div>
+        <div style="margin-bottom:12px">
+          <div style="font-size:10px;color:rgba(255,255,255,0.35);font-family:var(--mono);margin-bottom:6px">CURRENT OUTFIT</div>
+          <div class="outfit-display" id="ep-outfit"><span style="font-size:12px;color:rgba(255,255,255,0.3);font-family:var(--mono)">empty</span></div>
+        </div>
+        <div style="font-size:10px;color:rgba(255,255,255,0.35);font-family:var(--mono);margin-bottom:6px">ACTION LOG</div>
+        <div class="episode-actions" id="ep-actions"></div>
+      </div>
+
+      <div id="play-help" class="card">
+        <div style="padding:20px 0;text-align:center">
+          <div style="font-family:var(--serif);font-size:20px;margin-bottom:8px">Choose a task and press Start</div>
+          <div style="color:var(--muted);font-size:13px">The episode player simulates an AI agent running through a task step by step. Watch it build outfits, make supply chain decisions, and earn rewards in real time.</div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</main>
+
+<script>
+const API = '';
+let episodeState = { task: null, done: false, outfit: [], sc: false };
+let autoTimer = null;
+let dashData = null;
+
+// ── NAV ──────────────────────────────────────────────────────────────────────
+const pageTitles = {
+  dashboard:'Dashboard', alerts:'Inventory alerts', forecast:'Demand forecast',
+  products:'Product catalogue', optimizer:'Supply chain optimizer',
+  tasks:'OpenEnv tasks', play:'Episode player'
+};
+
+function showPage(name) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  document.getElementById('page-' + name).classList.add('active');
+  document.querySelectorAll('.nav-item')[
+    ['dashboard','alerts','forecast','products','optimizer','tasks','play'].indexOf(name) + 1
+  ]?.classList.add('active');
+  document.getElementById('page-title').textContent = pageTitles[name] || name;
+  loadPage(name);
+}
+
+// fix nav active
+document.querySelectorAll('.nav-item').forEach((el, i) => {
+  const pages = ['dashboard','alerts','forecast','products','optimizer','tasks','play'];
+  el.onclick = function() {
+    document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+    el.classList.add('active');
+    const name = pages[i];
+    document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+    document.getElementById('page-' + name).classList.add('active');
+    document.getElementById('page-title').textContent = pageTitles[name] || name;
+    loadPage(name);
+  };
+});
+
+// ── API HELPERS ───────────────────────────────────────────────────────────────
+async function apiFetch(path) {
+  const r = await fetch(API + path);
+  if (!r.ok) throw new Error(r.status);
+  return r.json();
+}
+
+async function apiPost(path, body) {
+  const r = await fetch(API + path, {
+    method: 'POST',
+    headers: {'Content-Type':'application/json'},
+    body: JSON.stringify(body)
+  });
+  if (!r.ok) throw new Error(r.status);
+  return r.json();
+}
+
+// ── HEALTH CHECK ─────────────────────────────────────────────────────────────
+async function checkHealth() {
+  try {
+    const h = await apiFetch('/health');
+    document.getElementById('status-dot').className = 'status-dot';
+    document.getElementById('status-text').textContent = 'live';
+  } catch {
+    document.getElementById('status-dot').className = 'status-dot error';
+    document.getElementById('status-text').textContent = 'offline';
+  }
+}
+
+// ── FORMAT HELPERS ────────────────────────────────────────────────────────────
+function fmtINR(n) {
+  if (n >= 100000) return '₹' + (n/100000).toFixed(1) + 'L';
+  if (n >= 1000)   return '₹' + (n/1000).toFixed(1) + 'K';
+  return '₹' + Math.round(n);
+}
+
+// ── DASHBOARD ─────────────────────────────────────────────────────────────────
+async function loadDashboard() {
+  try {
+    const [dash, alerts] = await Promise.all([
+      apiFetch('/sc/dashboard'),
+      apiFetch('/sc/alerts')
+    ]);
+    dashData = dash;
+
+    document.getElementById('stat-inv').textContent    = fmtINR(dash.total_inventory_value_inr);
+    document.getElementById('stat-dead').textContent   = fmtINR(dash.dead_stock_value_inr);
+    document.getElementById('stat-dead-pct').textContent = dash.dead_stock_pct.toFixed(1) + '% of inventory';
+    document.getElementById('stat-critical').textContent = dash.potential_stockout_products;
+    document.getElementById('stat-reorders').textContent = dash.reorder_actions_needed;
+
+    const alertsEl = document.getElementById('dashboard-alerts');
+    const top3 = alerts.alerts.slice(0, 4);
+    alertsEl.innerHTML = top3.map(a => alertRow(a)).join('');
+    document.getElementById('alert-count').textContent = alerts.alerts.length + ' total';
+
+    const insEl = document.getElementById('dashboard-insights');
+    insEl.innerHTML = dash.top_insights.map(i =>
+      `<div class="insight">${i}</div>`
+    ).join('');
+
+    await loadDemandChart();
+  } catch(e) {
+    console.error('Dashboard load failed:', e);
+  }
+}
+
+function alertRow(a) {
+  const cls = a.severity === 'CRITICAL' ? 'critical' : a.severity === 'HIGH' ? 'high' : 'medium';
+  return `<div class="alert-row ${cls}">
+    <span class="alert-badge">${a.severity}</span>
+    <span class="alert-product">${a.product_name}</span>
+    <span class="alert-msg">${a.alert_type.replace('_',' ')}</span>
+    <span class="alert-action">${(a.recommended_action||'').substring(0,40)}</span>
+  </div>`;
+}
+
+async function loadDemandChart() {
+  try {
+    const data = await apiFetch('/sc/forecast?horizon_weeks=12');
+    const products = data.forecasts.slice(0, 10);
+    const canvas = document.getElementById('demand-canvas');
+    const ctx = canvas.getContext('2d');
+    canvas.width = canvas.offsetWidth * window.devicePixelRatio;
+    canvas.height = 160 * window.devicePixelRatio;
+    ctx.scale(window.devicePixelRatio, window.devicePixelRatio);
+    const w = canvas.offsetWidth, h = 160;
+    ctx.clearRect(0, 0, w, h);
+
+    const maxVal = Math.max(...products.map(p => p.peak_units));
+    const barW = Math.floor((w - 40) / products.length) - 6;
+    const colors = ['#c8522a','#1a7a6e','#b87d2a','#5a3db8','#2d7a3a','#b83232','#1a7a6e','#c8522a','#b87d2a','#5a3db8'];
+
+    products.forEach((p, i) => {
+      const barH = Math.max(4, ((p.avg_weekly) / maxVal) * (h - 36));
+      const x = 20 + i * (barW + 6);
+      const y = h - 20 - barH;
+
+      ctx.fillStyle = colors[i % colors.length] + '33';
+      ctx.beginPath();
+      ctx.roundRect(x, y, barW, barH, [4, 4, 0, 0]);
+      ctx.fill();
+
+      ctx.fillStyle = colors[i % colors.length];
+      ctx.beginPath();
+      ctx.roundRect(x, y, barW, Math.min(barH, 6), [4, 4, 0, 0]);
+      ctx.fill();
+
+      ctx.fillStyle = '#9a9488';
+      ctx.font = '9px DM Mono, monospace';
+      ctx.textAlign = 'center';
+      const lbl = p.product_name.split(' ')[0];
+      ctx.fillText(lbl.substring(0,7), x + barW/2, h - 6);
+
+      ctx.fillStyle = '#0f0e0d';
+      ctx.font = '10px Outfit, sans-serif';
+      ctx.fillText(p.avg_weekly.toFixed(1), x + barW/2, y - 4);
+    });
+  } catch(e) { console.error('Chart failed:', e); }
+}
+
+// ── ALERTS ────────────────────────────────────────────────────────────────────
+async function loadAlerts() {
+  try {
+    const data = await apiFetch('/sc/alerts');
+    document.getElementById('alerts-summary').textContent =
+      `${data.critical_count} critical · ${data.high_count} high · ${data.medium_count} medium`;
+    document.getElementById('full-alerts').innerHTML =
+      data.alerts.map(a => alertRow(a)).join('');
+  } catch(e) {
+    document.getElementById('full-alerts').innerHTML = '<div class="empty"><div class="empty-title">Could not load alerts</div><div class="empty-sub">Make sure the server is running at localhost:7860</div></div>';
+  }
+}
+
+// ── FORECAST ─────────────────────────────────────────────────────────────────
+async function loadForecast() {
+  try {
+    const data = await apiFetch('/sc/forecast?horizon_weeks=12');
+    const tbody = document.getElementById('forecast-tbody');
+    tbody.innerHTML = data.forecasts.map(f => `
+      <tr>
+        <td style="font-weight:500">${f.product_name}</td>
+        <td style="color:var(--muted);font-family:var(--mono);font-size:11px">${f.category}</td>
+        <td style="font-family:var(--mono)">${f.avg_weekly.toFixed(1)}</td>
+        <td style="font-family:var(--mono);font-size:11px;color:var(--muted)">${f.peak_week}</td>
+        <td style="font-family:var(--mono);font-weight:500">${f.peak_units.toFixed(0)}</td>
+        <td><span class="risk-pill risk-${f.dead_stock_risk}">${f.dead_stock_risk}</span></td>
+        <td style="font-family:var(--mono);font-size:11px;color:${f.urgency==='CRITICAL'?'var(--red)':f.urgency==='HIGH'?'var(--amber)':'var(--green)'}">${f.urgency}</td>
+      </tr>`).join('');
+  } catch(e) {
+    document.getElementById('forecast-tbody').innerHTML = '<tr><td colspan="7"><div class="empty"><div class="empty-title">Server offline</div></div></td></tr>';
+  }
+}
+
+// ── PRODUCTS ──────────────────────────────────────────────────────────────────
+async function loadProducts() {
+  try {
+    const data = await apiFetch('/sc/catalogue');
+    const catColors = {sarees:'accent',lehengas:'purple',ethnic_wear:'teal',kurtas:'green',western_casual:'amber',western_formal:'amber',party_wear:'red',accessories:'teal'};
+    document.getElementById('product-grid').innerHTML = data.products.map(p => `
+      <div class="product-card">
+        <div class="product-cat">${p.category.replace('_',' ')}</div>
+        <div class="product-name">${p.product_name}</div>
+        <div class="product-price">₹${p.price_inr.toLocaleString()}</div>
+        <div class="product-stock">Base sales: ${p.base_weekly_sales}/wk · Lead: ${p.lead_time_weeks}w</div>
+      </div>`).join('');
+  } catch(e) {
+    document.getElementById('product-grid').innerHTML = '<div class="empty"><div class="empty-title">Server offline</div></div>';
+  }
+}
+
+// ── OPTIMIZER ─────────────────────────────────────────────────────────────────
+async function loadOptimizer() {
+  try {
+    const data = await apiFetch('/sc/dashboard');
+
+    const mdEl = document.getElementById('markdown-list');
+    if (data.markdown_plans.length === 0) {
+      mdEl.innerHTML = '<div class="empty-sub" style="color:var(--muted);font-size:13px;padding:12px 0">No markdown plans needed right now.</div>';
+    } else {
+      mdEl.innerHTML = data.markdown_plans.map(m => `
+        <div style="padding:12px 0;border-bottom:1px solid var(--surface)">
+          <div style="font-weight:500;font-size:13px;margin-bottom:4px">${m.product_name}</div>
+          <div style="font-size:12px;color:var(--muted);margin-bottom:6px">${m.recommendation.substring(0,90)}…</div>
+          <div style="display:flex;gap:12px;font-size:11px;font-family:var(--mono)">
+            <span style="color:var(--red)">-${Math.round(m.markdown_pct*100)}%</span>
+            <span style="color:var(--muted)">₹${m.new_price_inr.toLocaleString()}</span>
+            <span style="color:var(--teal)">${m.weeks_to_clear.toFixed(1)}w to clear</span>
+          </div>
+        </div>`).join('');
+    }
+
+    const bdEl = document.getElementById('bundle-list');
+    if (data.bundle_recommendations.length === 0) {
+      bdEl.innerHTML = '<div class="empty-sub" style="color:var(--muted);font-size:13px;padding:12px 0">No bundle opportunities found.</div>';
+    } else {
+      bdEl.innerHTML = data.bundle_recommendations.map(b => `
+        <div style="padding:12px 0;border-bottom:1px solid var(--surface)">
+          <div style="font-weight:500;font-size:13px;margin-bottom:4px">${b.anchor} + ${b.bundle_with.join(', ')}</div>
+          <div style="font-size:11px;font-family:var(--mono);display:flex;gap:12px;margin-bottom:4px">
+            <span style="color:var(--accent)">₹${b.bundle_price.toLocaleString()}</span>
+            <span style="color:var(--green)">+${b.uplift_pct}% demand lift</span>
+          </div>
+          <div style="font-size:11px;color:var(--muted)">${b.occasion}</div>
+        </div>`).join('');
+    }
+
+    const eoqEl = document.getElementById('eoq-list');
+    eoqEl.innerHTML = data.eoq_summary.slice(0,12).map(e => `
+      <div class="eoq-row">
+        <div style="font-size:12px;font-weight:500">${e.product_name}</div>
+        <div style="font-family:var(--mono);color:var(--teal)">${e.eoq_units} units</div>
+        <div style="font-family:var(--mono)">${e.reorder_point}</div>
+        <div style="font-family:var(--mono);color:var(--muted)">${e.safety_stock}</div>
+      </div>`).join('');
+  } catch(e) {
+    ['markdown-list','bundle-list','eoq-list'].forEach(id => {
+      document.getElementById(id).innerHTML = '<div class="empty"><div class="empty-title">Server offline</div></div>';
+    });
+  }
+}
+
+// ── TASKS ─────────────────────────────────────────────────────────────────────
+async function loadTasks() {
+  try {
+    const data = await apiFetch('/tasks');
+    const diffMap = {easy:'easy',medium:'medium',hard:'hard','hard+':'hardplus'};
+    document.getElementById('task-grid').innerHTML = Object.entries(data).map(([id, t]) => `
+      <div class="task-card ${diffMap[t.difficulty]||'hard'}">
+        <div class="task-diff">${t.difficulty}</div>
+        <div class="task-name">${t.name}</div>
+        <div class="task-desc">${t.description.substring(0,130)}…</div>
+        <div class="task-meta">
+          <div class="task-meta-item">Steps: <span>${t.max_steps}</span></div>
+          <div class="task-meta-item">Module: <span>${t.module}</span></div>
+        </div>
+      </div>`).join('');
+  } catch(e) {
+    document.getElementById('task-grid').innerHTML = '<div class="empty"><div class="empty-title">Server offline</div></div>';
+  }
+}
+
+// ── EPISODE PLAYER ────────────────────────────────────────────────────────────
+const SMART_ACTIONS = {
+  task_casual_budget: [
+    {action_type:'add_item',item_id:'T004'},
+    {action_type:'add_item',item_id:'B002'},
+    {action_type:'add_item',item_id:'S001'},
+    {action_type:'add_item',item_id:'A001'},
+    {action_type:'request_feedback'},
+    {action_type:'finalize_outfit'},
+  ],
+  task_office_ready: [
+    {action_type:'add_item',item_id:'T001'},
+    {action_type:'add_item',item_id:'B001'},
+    {action_type:'add_item',item_id:'S002'},
+    {action_type:'add_item',item_id:'A006'},
+    {action_type:'add_item',item_id:'A004'},
+    {action_type:'request_feedback'},
+    {action_type:'finalize_outfit'},
+  ],
+  task_gala_stylist: [
+    {action_type:'add_item',item_id:'T005'},
+    {action_type:'add_item',item_id:'B007'},
+    {action_type:'add_item',item_id:'S007'},
+    {action_type:'add_item',item_id:'A003'},
+    {action_type:'add_item',item_id:'O003'},
+    {action_type:'request_feedback'},
+    {action_type:'finalize_outfit'},
+  ],
+};
+
+const SC_ACTIONS = [
+  {action_type:'check_alerts'},
+  {action_type:'request_forecast',product_id:'P001'},
+  {action_type:'reorder_product',product_id:'P004',units:5},
+  {action_type:'reorder_product',product_id:'P001',units:8},
+  {action_type:'apply_markdown',product_id:'P003',markdown_pct:0.20},
+  {action_type:'create_bundle',product_id:'P003',bundle_with_id:'P016'},
+  {action_type:'reorder_product',product_id:'P002',units:10},
+  {action_type:'finalize_plan'},
+];
+
+let actionQueue = [];
+let actionIdx = 0;
+let episodeDone = false;
+
+async function startEpisode() {
+  const task = document.getElementById('task-select').value;
+  episodeState.sc = task === 'sc';
+  episodeState.task = task;
+  episodeDone = false;
+  actionIdx = 0;
+  actionQueue = episodeState.sc ? SC_ACTIONS : (SMART_ACTIONS[task] || SMART_ACTIONS.task_casual_budget);
+
+  document.getElementById('ep-actions').innerHTML = '';
+  document.getElementById('ep-outfit').innerHTML = '<span style="font-size:12px;color:rgba(255,255,255,0.3);font-family:var(--mono)">empty</span>';
+  document.getElementById('ep-score').textContent = '0.000';
+  document.getElementById('episode-box').style.display = 'block';
+  document.getElementById('play-help').style.display = 'none';
+  document.getElementById('step-btn').disabled = false;
+  document.getElementById('auto-btn').disabled = false;
+  document.getElementById('episode-status').textContent = '';
+  if (autoTimer) { clearInterval(autoTimer); autoTimer = null; }
+
+  try {
+    const endpoint = episodeState.sc ? '/sc/reset' : '/reset';
+    const body = episodeState.sc ? {} : {task_id: task};
+    const data = await apiPost(endpoint, body);
+    const obs = data.observation;
+    document.getElementById('ep-title').textContent = episodeState.sc
+      ? (obs.boutique_name || 'Supply chain episode')
+      : (obs.task_description || '').substring(0, 60) + '…';
+    document.getElementById('episode-status').textContent = 'ready — press Step';
+  } catch(e) {
+    document.getElementById('episode-status').textContent = 'Error: server offline';
+  }
+}
+
+async function stepEpisode() {
+  if (episodeDone || actionIdx >= actionQueue.length) {
+    document.getElementById('episode-status').textContent = 'Episode complete';
+    document.getElementById('step-btn').disabled = true;
+    return;
+  }
+
+  const action = actionQueue[actionIdx++];
+  try {
+    const endpoint = episodeState.sc ? '/sc/step' : '/step';
+    const body = episodeState.sc ? {action} : {task_id: episodeState.task, action};
+    const data = await apiPost(endpoint, body);
+    const reward = typeof data.reward === 'object' ? data.reward.value : data.reward;
+    const obs = data.observation;
+    episodeDone = data.done;
+
+    const score = obs.total_score ?? obs.outfit_score ?? 0;
+    document.getElementById('ep-score').textContent = score.toFixed(3);
+
+    const actionsEl = document.getElementById('ep-actions');
+    const rewardNum = parseFloat(reward) || 0;
+    actionsEl.innerHTML += `<div class="action-line">
+      <span class="action-step">#${actionIdx}</span>
+      <span class="action-type">${action.action_type}</span>
+      ${action.item_id ? `<span style="color:rgba(255,255,255,0.45)">${action.item_id}</span>` : ''}
+      ${action.product_id ? `<span style="color:rgba(255,255,255,0.45)">${action.product_id}</span>` : ''}
+      <span class="action-reward ${rewardNum < 0 ? 'neg' : ''}">${rewardNum >= 0 ? '+' : ''}${rewardNum.toFixed(3)}</span>
+    </div>`;
+    actionsEl.scrollTop = actionsEl.scrollHeight;
+
+    if (!episodeState.sc && obs.current_outfit && obs.current_outfit.length) {
+      document.getElementById('ep-outfit').innerHTML = obs.current_outfit.map(id =>
+        `<span class="outfit-tag">${id}</span>`).join('');
+    }
+
+    if (data.done) {
+      document.getElementById('episode-status').textContent = 'Episode finished!';
+      document.getElementById('step-btn').disabled = true;
+      if (autoTimer) { clearInterval(autoTimer); autoTimer = null; document.getElementById('auto-btn').textContent = 'Auto-play'; }
+    } else {
+      document.getElementById('episode-status').textContent = `Step ${actionIdx} of ${actionQueue.length}`;
+    }
+  } catch(e) {
+    document.getElementById('episode-status').textContent = 'Error: ' + e.message;
+  }
+}
+
+function autoPlay() {
+  if (autoTimer) {
+    clearInterval(autoTimer);
+    autoTimer = null;
+    document.getElementById('auto-btn').textContent = 'Auto-play';
+    return;
+  }
+  document.getElementById('auto-btn').textContent = 'Pause';
+  autoTimer = setInterval(async () => {
+    if (episodeDone || actionIdx >= actionQueue.length) {
+      clearInterval(autoTimer);
+      autoTimer = null;
+      document.getElementById('auto-btn').textContent = 'Auto-play';
+      return;
+    }
+    await stepEpisode();
+  }, 900);
+}
+
+// ── PAGE LOADER ───────────────────────────────────────────────────────────────
+const loaded = {};
+function loadPage(name) {
+  if (loaded[name]) return;
+  loaded[name] = true;
+  if (name === 'dashboard') loadDashboard();
+  else if (name === 'alerts') loadAlerts();
+  else if (name === 'forecast') loadForecast();
+  else if (name === 'products') loadProducts();
+  else if (name === 'optimizer') loadOptimizer();
+  else if (name === 'tasks') loadTasks();
+}
+
+function refreshAll() {
+  Object.keys(loaded).forEach(k => delete loaded[k]);
+  const active = document.querySelector('.page.active')?.id?.replace('page-','');
+  if (active) loadPage(active);
+}
+
+// ── INIT ──────────────────────────────────────────────────────────────────────
+checkHealth();
+setInterval(checkHealth, 10000);
+loadDashboard();
+</script>
+</body>
+</html>
